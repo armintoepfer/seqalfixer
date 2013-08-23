@@ -92,7 +92,7 @@
             <artifactId>args4j</artifactId>
             <version>2.0.16</version>
         </dependency>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
             <version>1.2</version>
@@ -101,6 +101,11 @@
             <groupId>net.sf</groupId>
             <artifactId>samtools</artifactId>
             <version>1.9.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
     </dependencies>
     <pluginRepositories>

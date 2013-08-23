@@ -1,32 +1,29 @@
 /**
  * Copyright (c) 2013 Armin Töpfer
  *
- * This file is part of ProfileSim.
+ * This file is part of AlignmentFixer.
  *
- * ProfileSim is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * AlignmentFixer is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or any later version.
  *
- * ProfileSim is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * ProfileSim. If not, see <http://www.gnu.org/licenses/>.
+ * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.ethz.bsse.alignmentfixer.utils;
 
 import ch.ethz.bsse.alignmentfixer.informationholder.Globals;
 import ch.ethz.bsse.alignmentfixer.informationholder.Read;
 import ch.ethz.bsse.alignmentfixer.informationholder.ReadTMP;
-import ch.ethz.bsse.alignmentfixer.informationholder.Threading;
+import com.google.common.collect.Maps;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.ConcurrentMap;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 
@@ -179,91 +176,47 @@ public class Utils extends FastaParser {
     }
 
     public static Map<String, Read> parseBAMSAMPure(String location) {
-        Map<String, Read> readMap = new HashMap<>();
         File bam = new File(location);
-        SAMFileReader sfr = new SAMFileReader(bam);
-        double size = 0;
-        for (final SAMRecord samRecord : sfr) {
-            size++;
-        }
-        sfr.close();
-        sfr = new SAMFileReader(bam);
-        int counter = 0;
-        int x = 0;
-        List<Callable<List<ReadTMP>>> callables = new ArrayList<>();
-        List<SAMRecord> l = new LinkedList<>();
-        int slices = 0;
-        int max = (int) Math.ceil(size / (Runtime.getRuntime().availableProcessors() - 1));
-        for (final SAMRecord samRecord : sfr) {
-            if (x > max) {
-                x = 0;
-                slices++;
-                callables.add(new SFRComputing(l));
-                l = new LinkedList<>();
-            } else {
-            }
-            StatusUpdate.getINSTANCE().print("Parsing\t\t" + (Math.round((counter++ / size) * 100)) + "%");
-            l.add(samRecord);
-            x++;
-        }
-        StatusUpdate.getINSTANCE().print("Parsing\t\tcomputing");
-        callables.add(new SFRComputing(l));
-        List<Future<List<ReadTMP>>> readFutures = null;
-        try {
-            readFutures = Threading.getINSTANCE().getExecutor().invokeAll(callables);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        StatusUpdate.getINSTANCE().print("Parsing\t\t           ");
-        StatusUpdate.getINSTANCE().print("Parsing\t\tdone");
-        sfr.close();
-        StringBuilder sb = new StringBuilder();
-        for (Future<List<ReadTMP>> future : readFutures) {
-            try {
-                List<ReadTMP> readList = future.get();
-                for (ReadTMP read : readList) {
+        final ConcurrentMap<String, Read> readMap;
+        try (SAMFileReader sfr = new SAMFileReader(bam)) {
+            StatusUpdate.getINSTANCE().print("Parsing alignment");
+            readMap = Maps.newConcurrentMap();
+            Parallel.ForEach(sfr, new LoopBody<SAMRecord>() {
+                @Override
+                public void run(SAMRecord r) {
+                    ReadTMP read = SFRComputing.single(r);
                     if (read != null) {
                         String name = read.name;
-                        int refStart = read.refStart;
-                        byte[] readBases = read.readBases;
-                        double[] quality = read.quality;
                         boolean hasQuality = read.hasQuality;
-                        boolean[] cigar = read.cigar;
                         if (readMap.containsKey(name)) {
                             if (hasQuality) {
-                                readMap.get(name).setPairedEnd(readBases, refStart, refStart + readBases.length, quality, cigar);
+                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar);
                             } else {
-                                readMap.get(name).setPairedEnd(readBases, refStart, refStart + readBases.length, cigar);
+                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar);
                             }
                             Read r2 = readMap.get(name);
                             if (r2.isPaired()) {
-                                sb.append(r2.getCrickEnd() - r2.getWatsonBegin() + "\n");
+                                //                                sb.append(r2.getCrickEnd() - r2.getWatsonBegin() + "\n");
                                 if (Globals.getINSTANCE().isUNPAIRED()) {
                                     readMap.put(name + "_R", r2.unpair());
                                 } else {
                                     if ((r2.getCrickBegin() - r2.getWatsonEnd()) > 2000) {
                                         readMap.put(name + "_R", r2.unpair());
                                     }
-//                                    if (r2.getCrickBegin() - r2.getWatsonEnd() < 0) {
-//                                        System.out.println(name + "\t" + r2.getWatsonBegin() + "\t" + r2.getWatsonEnd() + "\t" + r2.getCrickBegin() + "\t" + r2.getCrickEnd());
-//                                    }
                                 }
                             }
                         } else {
                             if (hasQuality) {
-                                readMap.put(name, new Read(readBases, refStart, refStart + readBases.length, quality, cigar));
+                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar));
                             } else {
-                                readMap.put(name, new Read(readBases, refStart, refStart + readBases.length, cigar));
+                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar));
                             }
                         }
                     }
                 }
-            } catch (InterruptedException | ExecutionException ex) {
-                System.err.println(ex);
-            }
+            });
         }
-        readFutures.clear();
-
+        StatusUpdate.getINSTANCE().print("Parsing alignment\tdone");
         return readMap;
     }
 

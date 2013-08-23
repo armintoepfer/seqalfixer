@@ -1,23 +1,23 @@
 /**
  * Copyright (c) 2013 Armin Töpfer
  *
- * This file is part of ProfileSim.
+ * This file is part of AlignmentFixer.
  *
- * ProfileSim is free software: you can redistribute it and/or modify it under
+ * AlignmentFixer is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or any later version.
  *
- * ProfileSim is distributed in the hope that it will be useful, but WITHOUT ANY
+ * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * ProfileSim. If not, see <http://www.gnu.org/licenses/>.
+ * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.ethz.bsse.alignmentfixer;
 
 import ch.ethz.bsse.alignmentfixer.informationholder.Globals;
-import ch.ethz.bsse.alignmentfixer.utils.CreateProfile;
+import ch.ethz.bsse.alignmentfixer.utils.Preprocessing;
 import ch.ethz.bsse.alignmentfixer.utils.Utils;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +48,9 @@ public class Startup {
     private String hiv;
     @Option(name = "-g")
     private String genome;
+    @Option(name = "--consensus")
+    private boolean consensus;
+    
 
     private void setInputOutput() {
         if (output == null) {
@@ -168,7 +171,8 @@ public class Startup {
             Globals.getINSTANCE().setWINDOW_END(Integer.parseInt(r[1]) - 1);
             Globals.getINSTANCE().setWINDOW(true);
         }
-        new CreateProfile(genome, input);
+            Globals.getINSTANCE().setCONSENSUS(this.consensus);
+        new Preprocessing(genome, input);
     }
 
     public void doMain(String[] args) throws IOException {
@@ -195,10 +199,10 @@ public class Startup {
         } catch (CmdLineException cmderror) {
             System.err.println(cmderror.getMessage());
             System.err.println("");
-            System.err.println("ProfileSim version: " + Startup.class.getPackage().getImplementationVersion());
-//            System.err.println("Get latest version from http://bit.ly/ProfileSim");
+            System.err.println("AlignmentFixer version: " + Startup.class.getPackage().getImplementationVersion());
+//            System.err.println("Get latest version from http://bit.ly/AlignmentFixer");
             System.err.println("");
-            System.err.println("USAGE: java -jar ProfileSim.jar options...\n");
+            System.err.println("USAGE: java -jar AlignmentFixer.jar options...\n");
             System.err.println(" -------------------------");
             System.err.println(" === GENERAL options ===");
             System.err.println("  -i INPUT\t\t: Alignment file in BAM or SAM format.");
@@ -213,7 +217,7 @@ public class Startup {
             System.err.println("  -XX:+UseNUMA\t\t: Enhances performance on multi-CPU systems.");
             System.err.println(" -------------------------");
             System.err.println(" === EXAMPLES ===");
-            System.err.println("   java -XX:+UseParallelGC -Xms2g -Xmx10g -XX:+UseNUMA -XX:NewRatio=9 -jar ProfileSim.jar -i alignment.bam -g references.fasta");
+            System.err.println("   java -XX:+UseParallelGC -Xms2g -Xmx10g -XX:+UseNUMA -XX:NewRatio=9 -jar AlignmentFixer.jar -i alignment.bam -g references.fasta");
             System.err.println(" -------------------------");
         }
     }

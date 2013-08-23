@@ -1,26 +1,20 @@
 /**
  * Copyright (c) 2013 Armin Töpfer
  *
- * This file is part of ProfileSim.
+ * This file is part of AlignmentFixer.
  *
- * ProfileSim is free software: you can redistribute it and/or modify it under
+ * AlignmentFixer is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or any later version.
  *
- * ProfileSim is distributed in the hope that it will be useful, but WITHOUT ANY
+ * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * ProfileSim. If not, see <http://www.gnu.org/licenses/>.
+ * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.ethz.bsse.alignmentfixer.informationholder;
-
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Information holder for all necessary given and inferred parameters.
@@ -37,12 +31,11 @@ public class Globals {
     private boolean UNPAIRED;
     private boolean WINDOW;
     private boolean DEBUG;
-    private boolean STORAGE;
+    private boolean CONSENSUS;
     private int WINDOW_BEGIN;
     private int WINDOW_END;
     private int ALIGNMENT_BEGIN = Integer.MAX_VALUE;
     private int ALIGNMENT_END = Integer.MIN_VALUE;
-    private final int cpus = Runtime.getRuntime().availableProcessors();
     private String GENOME;
     private String SAVEPATH;
 
@@ -82,18 +75,6 @@ public class Globals {
 
     public void setDEBUG(boolean DEBUG) {
         this.DEBUG = DEBUG;
-    }
-
-    public int getCpus() {
-        return cpus;
-    }
-
-    public boolean isSTORAGE() {
-        return STORAGE;
-    }
-
-    public void setSTORAGE(boolean STORAGE) {
-        this.STORAGE = STORAGE;
     }
 
     public String getGENOME() {
@@ -138,5 +119,13 @@ public class Globals {
 
     public boolean isDEBUG() {
         return DEBUG;
+    }
+
+    public boolean isCONSENSUS() {
+        return CONSENSUS;
+    }
+
+    public void setCONSENSUS(boolean CONSENSUS) {
+        this.CONSENSUS = CONSENSUS;
     }
 }

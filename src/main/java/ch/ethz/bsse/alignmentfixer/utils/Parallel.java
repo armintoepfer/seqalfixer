@@ -30,7 +30,7 @@ public class Parallel {
      */
     public static <T> void ForEach(Iterable<T> parameters, final LoopBody<T> loopBody) {
         ExecutorService executor = Executors.newFixedThreadPool(iCPU);
-        List<Future<?>> futures = new LinkedList<Future<?>>();
+        List<Future<?>> futures = new LinkedList<>();
 
         for (final T param : parameters) {
             Future<?> future = executor.submit(new Runnable() {
