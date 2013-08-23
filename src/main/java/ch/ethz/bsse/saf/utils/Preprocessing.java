@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU General Public License along with
  * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.ethz.bsse.alignmentfixer.utils;
+package ch.ethz.bsse.saf.utils;
 
-import ch.ethz.bsse.alignmentfixer.informationholder.Globals;
-import ch.ethz.bsse.alignmentfixer.informationholder.Read;
+import ch.ethz.bsse.saf.informationholder.Globals;
+import ch.ethz.bsse.saf.informationholder.Read;
 import java.io.File;
 import java.util.Arrays;
 
@@ -72,7 +72,7 @@ public class Preprocessing {
         AlignmentPair ap = countPos(reads, L);
 
         int[][] alignment = ap.counts;
-        double[][] alignmentWeighted = ap.weighted;
+        double[][] alignmentWeighted = new double[L][5];
 
         StringBuilder sb = new StringBuilder();
         StringBuilder sbw = new StringBuilder();
@@ -100,15 +100,13 @@ public class Preprocessing {
             sb.append(i);
             sbw.append(i);
 
-            double sum = 0;
             int coveragePos = 0;
             for (int v = 0; v < 5; v++) {
-                sum += alignmentWeighted[i][v];
                 coveragePos += alignment[i][v];
             }
             sbCoverage.append(Globals.getINSTANCE().getALIGNMENT_BEGIN()+i).append("\t").append(coveragePos).append("\n");
             for (int v = 0; v < 5; v++) {
-                alignmentWeighted[i][v] /= sum;
+                alignmentWeighted[i][v] += alignment[i][v]/ (double)coveragePos;
                 if (alignmentWeighted[i][v] > 0) {
                     entropy[i] -= alignmentWeighted[i][v] * Math.log(alignmentWeighted[i][v]) / Math.log(5);
                 }
@@ -144,11 +142,11 @@ public class Preprocessing {
             for (int i = 0; i < r.getWatsonLength(); i++) {
                 try {
                     ap.counts[i + begin][r.getSequence()[i]] += r.getCount();
-                    if (r.getWatsonQuality() == null || r.getWatsonQuality().length == 0) {
-                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount();
-                    } else {
-                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount() * r.getWatsonQuality()[i];
-                    }
+//                    if (r.getWatsonQuality() == null || r.getWatsonQuality().length == 0) {
+//                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount();
+//                    } else {
+//                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount() * r.getWatsonQuality()[i];
+//                    }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println(e);
                 }
@@ -157,11 +155,11 @@ public class Preprocessing {
                 begin = r.getCrickBegin();
                 for (int i = 0; i < r.getCrickLength(); i++) {
                     ap.counts[i + begin][r.getCrickSequence()[i]] += r.getCount();
-                    if (r.getCrickQuality() == null || r.getCrickQuality().length == 0) {
-                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount();
-                    } else {
-                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount() * r.getCrickQuality()[i];
-                    }
+//                    if (r.getCrickQuality() == null || r.getCrickQuality().length == 0) {
+//                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount();
+//                    } else {
+//                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount() * r.getCrickQuality()[i];
+//                    }
                 }
             }
         }

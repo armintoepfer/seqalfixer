@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.ethz.bsse.alignmentfixer.informationholder;
+package ch.ethz.bsse.saf.informationholder;
 
 /**
  * Information holder for all necessary given and inferred parameters.

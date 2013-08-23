@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.ethz.bsse.alignmentfixer.utils;
+package ch.ethz.bsse.saf.utils;
 
 
 /**

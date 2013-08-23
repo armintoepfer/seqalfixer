@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License along with
  * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.ethz.bsse.alignmentfixer.utils;
+package ch.ethz.bsse.saf.utils;
 
-import ch.ethz.bsse.alignmentfixer.informationholder.Globals;
-import ch.ethz.bsse.alignmentfixer.informationholder.Read;
-import ch.ethz.bsse.alignmentfixer.informationholder.ReadTMP;
+import ch.ethz.bsse.saf.informationholder.Globals;
+import ch.ethz.bsse.saf.informationholder.Read;
+import ch.ethz.bsse.saf.informationholder.ReadTMP;
 import com.google.common.collect.Maps;
 import java.io.*;
 import java.util.*;

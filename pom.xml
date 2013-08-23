@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ch.ethz.bsse</groupId>
-    <artifactId>alignmentfixer</artifactId>
+    <artifactId>saf</artifactId>
     <version>0.1</version>
     <packaging>jar</packaging>
-    <name>AlignmentFixer</name>
+    <name>SequenceAlignmentFixer</name>
 
     <developers>
         <developer>
@@ -37,7 +37,7 @@
                     </excludes>
                     <archive>
                         <manifest>
-                            <mainClass>ch.ethz.bsse.alignmentfixer.Startup</mainClass>
+                            <mainClass>ch.ethz.bsse.saf.Startup</mainClass>
                             <addDefaultImplementationEntries>
                                 true
                             </addDefaultImplementationEntries>
@@ -64,7 +64,7 @@
                             <attachToBuild>true</attachToBuild>
                             <!-- Optional, default is "onejar" -->
                             <classifier>full</classifier>
-                            <filename>AlignmentFixer.jar</filename>
+                            <filename>SequenceAlignmentFixer.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License along with
  * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.ethz.bsse.alignmentfixer;
+package ch.ethz.bsse.saf;
 
-import ch.ethz.bsse.alignmentfixer.informationholder.Globals;
-import ch.ethz.bsse.alignmentfixer.utils.Preprocessing;
-import ch.ethz.bsse.alignmentfixer.utils.Utils;
+import ch.ethz.bsse.saf.informationholder.Globals;
+import ch.ethz.bsse.saf.utils.Preprocessing;
+import ch.ethz.bsse.saf.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import net.sf.samtools.SAMFormatException;
