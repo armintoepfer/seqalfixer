@@ -15,6 +15,9 @@ Please get the latest binary at https://sourceforge.net/projects/seqalfixer/rele
  - SNV entropy landscape plot
  - Gapped consensus sequence including major deletions
 
+### SOON:
+ - Include non-frameshift insertion into consensus
+
 - - -
 
 #### PREREQUISITES TO RUN:
