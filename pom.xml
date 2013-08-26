@@ -4,7 +4,7 @@
 
     <groupId>ch.ethz.bsse</groupId>
     <artifactId>saf</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
     <packaging>jar</packaging>
     <name>SequenceAlignmentFixer</name>
 
@@ -107,6 +107,12 @@
             <artifactId>guava</artifactId>
             <version>14.0.1</version>
         </dependency>
+<!--        <dependency>
+            <groupId>org.apache.mahout</groupId>
+            <artifactId>mahout</artifactId>
+            <version>0.9-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>-->
     </dependencies>
     <pluginRepositories>
         <pluginRepository>
