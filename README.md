@@ -1,13 +1,14 @@
 # <b>S</b>equence<b>A</b>lignment<b>F</b>ixer
 
 ### CONTENT:
-This java command line application is a toolbox, combining a multitude of alignment statistics and fixes for Next Generation Sequencing (NGS) data.
+This java command line application is a toolbox, combining a multitude of alignment statistics and fixes for Next Generation Sequencing (NGS) data.  
+Computes consensus sequence with in-frame deletions and insertions
 
 ### CITATION:
 If you use <b>S</b>equence<b>A</b>lignment<b>F</b>ixer, please cite <i>Töpfer A.</i> https://github.com/armintoepfer/seqalfixer
 
 ### DOWNLOAD:
-Please get the latest binary at https://sourceforge.net/projects/seqalfixer/releases
+Please get the latest binary at https://github.com/armintoepfer/seqalfixer/releases
 
 ### FEATURES:
  - Select only a region for analysis
