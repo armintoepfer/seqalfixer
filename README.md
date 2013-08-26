@@ -14,9 +14,9 @@ Please get the latest binary at https://sourceforge.net/projects/seqalfixer/rele
  - Coverage plot
  - SNV entropy landscape plot
  - Consensus sequence:
- 1) Gapped, including major in-frame deletions
- 2) In-frame insertions are including, with minmal coverage of `-insertions INT`
- 3) Minimal coverage with `-coverage INT`
+  - Gapped, including major in-frame deletions
+  - In-frame insertions are including, with minmal coverage of `-insertions INT`
+  - Minimal coverage with `-coverage INT`
 
 - - -
 
@@ -33,7 +33,7 @@ Please get the latest binary at https://sourceforge.net/projects/seqalfixer/rele
 ### Consensus
  `--consensus` 
 
-### Minimal coverage of insertion
+### Minimal coverage of insertions
  `-insertions INT [default: do not include insertions]` 
 
 ### Minimal coverage
