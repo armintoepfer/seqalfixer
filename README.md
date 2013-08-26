@@ -24,19 +24,19 @@ Please get the latest binary at https://sourceforge.net/projects/seqalfixer/rele
  - JDK 7 (http://jdk7.java.net/)
 
 ## RUN:
- `java -jar SequenceAlignmentFixer.jar -i alignment.bam`
- Reads need to be properly aligned.
-
-### Reconstruct specific region with respect to reference genome numbering
+ `java -jar SequenceAlignmentFixer.jar -i alignment.bam`  
+ Reads need to be properly aligned.  
+  
+<b>Reconstruct specific region with respect to reference genome numbering</b>  
  `-r 790-2292`
 
-### Consensus
+<b>Consensus</b>  
  `--consensus` 
 
-### Minimal coverage of insertions
+<b>Minimal coverage of insertions</b>  
  `-insertions INT [default: do not include insertions]` 
 
-### Minimal coverage
+<b>Minimal coverage</b>  
  `-coverage INT [default: 0]`
 
 ### Plots
