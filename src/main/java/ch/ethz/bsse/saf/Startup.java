@@ -52,6 +52,8 @@ public class Startup {
     private boolean consensus;
     @Option(name = "-insertions")
     private int insertions = Integer.MAX_VALUE;
+    @Option(name = "-coverage")
+    private int coverage = 1;
     
 
     private void setInputOutput() {
@@ -175,6 +177,7 @@ public class Startup {
         }
             Globals.getINSTANCE().setCONSENSUS(this.consensus);
             Globals.getINSTANCE().setINSERTIONS(this.insertions);
+            Globals.getINSTANCE().setCOVERAGE(this.coverage);
         new Preprocessing(genome, input);
     }
 

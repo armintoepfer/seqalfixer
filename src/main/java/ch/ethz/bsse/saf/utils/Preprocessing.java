@@ -49,11 +49,6 @@ public class Preprocessing {
         }
         StatusUpdate.getINSTANCE().println("Reads\t\t\t" + N);
         StatusUpdate.getINSTANCE().println("Uniques\t\t" + alignmentReads.length);
-        for (Map.Entry<Integer, List<InsertionTriple>> e : Insertions.getINSTANCE().getInsertions().entrySet()) {
-            for (InsertionTriple it : e.getValue()) {
-                System.out.println("#" + e.getKey() + "\t" + it.count + "\t" + Utils.reverse(it.sequence));
-            }
-        }
     }
 
     private int[][] createAlignment(Read[] reads) {

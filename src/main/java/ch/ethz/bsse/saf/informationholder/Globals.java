@@ -35,6 +35,7 @@ public class Globals {
     private boolean WINDOW;
     private boolean DEBUG;
     private boolean CONSENSUS;
+    private int COVERAGE;
     private int INSERTIONS;
     private int WINDOW_BEGIN;
     private int WINDOW_END;
@@ -144,5 +145,13 @@ public class Globals {
 
     public void setINSERTIONS(int INSERTIONS) {
         this.INSERTIONS = INSERTIONS;
+    }
+
+    public int getCOVERAGE() {
+        return COVERAGE;
+    }
+
+    public void setCOVERAGE(int COVERAGE) {
+        this.COVERAGE = COVERAGE;
     }
 }
