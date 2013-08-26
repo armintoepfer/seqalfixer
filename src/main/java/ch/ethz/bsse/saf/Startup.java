@@ -3,13 +3,15 @@
  *
  * This file is part of SequenceAlignmentFixer.
  *
- * SequenceAlignmentFixer is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * SequenceAlignmentFixer is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or any later
+ * version.
  *
- * SequenceAlignmentFixer is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * SequenceAlignmentFixer is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU General Public License along with
  * SequenceAlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
@@ -54,7 +56,6 @@ public class Startup {
     private int insertions = Integer.MAX_VALUE;
     @Option(name = "-coverage")
     private int coverage = 1;
-    
 
     private void setInputOutput() {
         if (output == null) {
@@ -175,12 +176,14 @@ public class Startup {
             Globals.getINSTANCE().setWINDOW_END(Integer.parseInt(r[1]) - 1);
             Globals.getINSTANCE().setWINDOW(true);
         }
-            Globals.getINSTANCE().setCONSENSUS(this.consensus);
-            Globals.getINSTANCE().setINSERTIONS(this.insertions);
-            Globals.getINSTANCE().setCOVERAGE(this.coverage);
+        Globals.getINSTANCE().setCONSENSUS(this.consensus);
+        Globals.getINSTANCE().setINSERTIONS(this.insertions);
+        Globals.getINSTANCE().setCOVERAGE(this.coverage);
         new Preprocessing(genome, input);
-        System.out.println("");
-        System.out.println(Globals.getINSTANCE().getINSERTION_SUMMARY());
+        if (insertions != Integer.MAX_VALUE) {
+            System.out.println("");
+            System.out.println(Globals.getINSTANCE().getINSERTION_SUMMARY());
+        }
     }
 
     public void doMain(String[] args) throws IOException {

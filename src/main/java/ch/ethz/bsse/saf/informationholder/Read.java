@@ -126,7 +126,7 @@ public class Read {
         this.watsonQuality = qualConsensus;
         this.watsonCigar = cigarConsensus;
         this.watsonInsertions.putAll(this.crickInsertions);
-        this.crickInsertions = null;
+        this.crickInsertions = new HashMap<>();
         this.crickEnd = -1;
         this.crickBegin = 0;
         this.crickSequence = null;
@@ -333,6 +333,13 @@ public class Read {
     }
 
     public boolean sameInsertions(Read r) {
+        if (r == null) {
+            return false;
+        }
+//        if (this.watsonInsertions == null && r.watsonInsertions == null 
+//                && r.crickInsertions == null && this.crickInsertions == null) {
+//            return true;
+//        }
         if (this.watsonInsertions.size() != r.watsonInsertions.size()
                 || this.crickInsertions.size() != r.crickInsertions.size()) {
             return false;
@@ -407,7 +414,7 @@ public class Read {
         this.crickBegin = -1;
         this.crickEnd = -1;
         this.crickSequence = null;
-        this.crickInsertions = null;
+        this.crickInsertions = new HashMap<>();
         return r;
     }
 
