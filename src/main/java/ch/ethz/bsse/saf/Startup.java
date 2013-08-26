@@ -205,10 +205,9 @@ public class Startup {
         } catch (CmdLineException cmderror) {
             System.err.println(cmderror.getMessage());
             System.err.println("");
-            System.err.println("AlignmentFixer version: " + Startup.class.getPackage().getImplementationVersion());
-//            System.err.println("Get latest version from http://bit.ly/AlignmentFixer");
+            System.err.println("SequenceAlignmentFixer version: " + Startup.class.getPackage().getImplementationVersion());
             System.err.println("");
-            System.err.println("USAGE: java -jar AlignmentFixer.jar options...\n");
+            System.err.println("USAGE: java -jar SequenceAlignmentFixer.jar options...\n");
             System.err.println(" -------------------------");
             System.err.println(" === GENERAL options ===");
             System.err.println("  -i INPUT\t\t: Alignment file in BAM or SAM format.");
@@ -225,7 +224,7 @@ public class Startup {
             System.err.println("  -XX:+UseNUMA\t\t: Enhances performance on multi-CPU systems.");
             System.err.println(" -------------------------");
             System.err.println(" === EXAMPLES ===");
-            System.err.println("   java -XX:+UseParallelGC -Xms2g -Xmx10g -XX:+UseNUMA -XX:NewRatio=9 -jar AlignmentFixer.jar -i alignment.bam -g references.fasta");
+            System.err.println("   java -XX:+UseParallelGC -Xms2g -Xmx10g -XX:+UseNUMA -XX:NewRatio=9 -jar SequenceAlignmentFixer.jar -i alignment.bam -g references.fasta");
             System.err.println(" -------------------------");
         }
     }
