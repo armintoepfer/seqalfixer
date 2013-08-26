@@ -19,8 +19,13 @@ package ch.ethz.bsse.saf.utils;
 
 import ch.ethz.bsse.saf.informationholder.Globals;
 import ch.ethz.bsse.saf.informationholder.Read;
+import ch.ethz.bsse.saf.insertion.InsertionTriple;
+import ch.ethz.bsse.saf.insertion.Insertions;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Armin Töpfer (armin.toepfer [at] gmail.com)
@@ -33,12 +38,25 @@ public class Preprocessing {
     public Preprocessing(String genomePath, String alignmentPath) {
         Globals.getINSTANCE().setUNPAIRED(true);
         Read[] alignmentReads = Utils.parseBAMSAM(alignmentPath);
-        fixAlignment(alignmentReads);
+        int[][] alignment = createAlignment(alignmentReads);
+
+        this.saveR();
+
+        if (Globals.getINSTANCE().isCONSENSUS()) {
+            Insertions.getINSTANCE().add(alignmentReads);
+            String consensus = Consensus.create(alignment);
+            Utils.saveFile(Globals.getINSTANCE().getSAVEPATH() + "consensus.fasta", ">consensus\n" + consensus);
+        }
         StatusUpdate.getINSTANCE().println("Reads\t\t\t" + N);
         StatusUpdate.getINSTANCE().println("Uniques\t\t" + alignmentReads.length);
+        for (Map.Entry<Integer, List<InsertionTriple>> e : Insertions.getINSTANCE().getInsertions().entrySet()) {
+            for (InsertionTriple it : e.getValue()) {
+                System.out.println("#" + e.getKey() + "\t" + it.count + "\t" + Utils.reverse(it.sequence));
+            }
+        }
     }
 
-    private void fixAlignment(Read[] reads) {
+    private int[][] createAlignment(Read[] reads) {
         //fix alignment to position 0
         for (Read r : reads) {
             Globals.getINSTANCE().setALIGNMENT_BEGIN(Math.min(r.getBegin(), Globals.getINSTANCE().getALIGNMENT_BEGIN()));
@@ -50,18 +68,14 @@ public class Preprocessing {
         StatusUpdate.getINSTANCE().println("Modifying reads");
 
         Parallel.ForEach(Arrays.asList(reads), new LoopBody<Read>() {
+            @Override
             public void run(Read r) {
                 r.shrink();
             }
         });
-        int[][] alignment = computeAlignment(reads, L);
         StatusUpdate.getINSTANCE().print("Modifying reads\tdone");
-        this.saveR();
-        
-        if (Globals.getINSTANCE().isCONSENSUS()) {
-            String consensus = Consensus.create(alignment);
-            Utils.saveFile(Globals.getINSTANCE().getSAVEPATH()+"consensus.fasta", ">consensus\n"+consensus);
-        }
+        int[][] alignment = computeAlignment(reads, L);
+        return alignment;
     }
 
     private static int[][] computeAlignment(Read[] reads, int L) {
@@ -104,9 +118,9 @@ public class Preprocessing {
             for (int v = 0; v < 5; v++) {
                 coveragePos += alignment[i][v];
             }
-            sbCoverage.append(Globals.getINSTANCE().getALIGNMENT_BEGIN()+i).append("\t").append(coveragePos).append("\n");
+            sbCoverage.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i).append("\t").append(coveragePos).append("\n");
             for (int v = 0; v < 5; v++) {
-                alignmentWeighted[i][v] += alignment[i][v]/ (double)coveragePos;
+                alignmentWeighted[i][v] += alignment[i][v] / (double) coveragePos;
                 if (alignmentWeighted[i][v] > 0) {
                     entropy[i] -= alignmentWeighted[i][v] * Math.log(alignmentWeighted[i][v]) / Math.log(5);
                 }
@@ -142,11 +156,6 @@ public class Preprocessing {
             for (int i = 0; i < r.getWatsonLength(); i++) {
                 try {
                     ap.counts[i + begin][r.getSequence()[i]] += r.getCount();
-//                    if (r.getWatsonQuality() == null || r.getWatsonQuality().length == 0) {
-//                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount();
-//                    } else {
-//                        ap.weighted[i + begin][r.getSequence()[i]] += r.getCount() * r.getWatsonQuality()[i];
-//                    }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println(e);
                 }
@@ -155,11 +164,6 @@ public class Preprocessing {
                 begin = r.getCrickBegin();
                 for (int i = 0; i < r.getCrickLength(); i++) {
                     ap.counts[i + begin][r.getCrickSequence()[i]] += r.getCount();
-//                    if (r.getCrickQuality() == null || r.getCrickQuality().length == 0) {
-//                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount();
-//                    } else {
-//                        ap.weighted[i + begin][r.getCrickSequence()[i]] += r.getCount() * r.getCrickQuality()[i];
-//                    }
                 }
             }
         }

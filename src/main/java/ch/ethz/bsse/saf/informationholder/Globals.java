@@ -16,6 +16,9 @@
  */
 package ch.ethz.bsse.saf.informationholder;
 
+import com.google.common.collect.Maps;
+import java.util.Map;
+
 /**
  * Information holder for all necessary given and inferred parameters.
  *
@@ -32,12 +35,14 @@ public class Globals {
     private boolean WINDOW;
     private boolean DEBUG;
     private boolean CONSENSUS;
+    private int INSERTIONS;
     private int WINDOW_BEGIN;
     private int WINDOW_END;
     private int ALIGNMENT_BEGIN = Integer.MAX_VALUE;
     private int ALIGNMENT_END = Integer.MIN_VALUE;
     private String GENOME;
     private String SAVEPATH;
+    private Map<Integer,byte[]> insertionMap = Maps.newConcurrentMap();
 
     public Globals getInstance() {
         return INSTANCE;
@@ -127,5 +132,17 @@ public class Globals {
 
     public void setCONSENSUS(boolean CONSENSUS) {
         this.CONSENSUS = CONSENSUS;
+    }
+
+    public Map<Integer, byte[]> getInsertionMap() {
+        return insertionMap;
+    }
+
+    public int getINSERTIONS() {
+        return INSERTIONS;
+    }
+
+    public void setINSERTIONS(int INSERTIONS) {
+        this.INSERTIONS = INSERTIONS;
     }
 }

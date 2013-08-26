@@ -3,13 +3,14 @@
  *
  * This file is part of AlignmentFixer.
  *
- * AlignmentFixer is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * AlignmentFixer is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or any later version.
  *
- * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU General Public License along with
  * AlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
@@ -19,8 +20,10 @@ package ch.ethz.bsse.saf.utils;
 import ch.ethz.bsse.saf.informationholder.Globals;
 import ch.ethz.bsse.saf.informationholder.ReadTMP;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import net.sf.samtools.CigarElement;
 import static net.sf.samtools.CigarOperator.D;
@@ -70,6 +73,7 @@ public class SFRComputing implements Callable<List<ReadTMP>> {
             boolean hasQuality = samRecord.getBaseQualities().length > 1;
             List<Boolean> buildCigar = new ArrayList<>(readLength_);
             byte[] readBases_pure = samRecord.getReadBases();
+            Map<Integer, byte[]> insertions = new HashMap<>();
             for (CigarElement c : samRecord.getCigar().getCigarElements()) {
                 switch (c.getOperator()) {
                     case X:
@@ -97,6 +101,13 @@ public class SFRComputing implements Callable<List<ReadTMP>> {
                         }
                         break;
                     case I:
+                        if (c.getLength() % 3 == 0) {
+                            byte[] insertion = new byte[c.getLength()];
+                            for (int i = 0; i < c.getLength(); i++) {
+                                insertion[i] = readBases_pure[readStart + i];
+                            }
+                            insertions.put(refStart + readStart, Utils.reverseCharsToBytes(insertion));
+                        }
                         readStart += c.getLength();
                         break;
                     case D:
@@ -296,7 +307,7 @@ public class SFRComputing implements Callable<List<ReadTMP>> {
 
             String name = samRecord.getReadName();
 
-            return new ReadTMP(name, quality, readBases, refStart, true, cigar);
+            return new ReadTMP(name, quality, readBases, refStart, true, cigar, insertions);
 
         } catch (ArrayIndexOutOfBoundsException e) {
             System.err.println();

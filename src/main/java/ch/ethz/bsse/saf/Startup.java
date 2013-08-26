@@ -50,6 +50,8 @@ public class Startup {
     private String genome;
     @Option(name = "--consensus")
     private boolean consensus;
+    @Option(name = "-insertions")
+    private int insertions = Integer.MAX_VALUE;
     
 
     private void setInputOutput() {
@@ -172,6 +174,7 @@ public class Startup {
             Globals.getINSTANCE().setWINDOW(true);
         }
             Globals.getINSTANCE().setCONSENSUS(this.consensus);
+            Globals.getINSTANCE().setINSERTIONS(this.insertions);
         new Preprocessing(genome, input);
     }
 

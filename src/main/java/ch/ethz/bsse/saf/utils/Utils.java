@@ -63,26 +63,6 @@ public class Utils extends FastaParser {
         return rs;
     }
 
-    private static boolean isFastaFormat(String path) {
-        try {
-            FileInputStream fstream = new FileInputStream(path);
-            try (DataInputStream in = new DataInputStream(fstream)) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String strLine;
-                while ((strLine = br.readLine()) != null) {
-                    if (strLine.startsWith(">")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error identifying format of input file: " + e.getMessage());
-        }
-        return false;
-    }
-
     public static void mkdir(String save) {
         if (!new File(save).exists()) {
             if (!new File(save).mkdirs()) {
@@ -127,6 +107,58 @@ public class Utils extends FastaParser {
         return sb.toString();
     }
 
+    public static String reverseChars(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            switch (b) {
+                case 65:
+                    sb.append("A");
+                    break;
+                case 67:
+                    sb.append("C");
+                    break;
+                case 71:
+                    sb.append("G");
+                    break;
+                case 84:
+                    sb.append("T");
+                    break;
+                case 45:
+                    sb.append("-");
+                    break;
+                default:
+                    break;
+            }
+        }
+        return sb.toString();
+    }
+    public static byte[] reverseCharsToBytes(byte[] bytes) {
+        byte[] output = new byte[bytes.length];
+        int i = 0;
+        for (byte b : bytes) {
+            switch (b) {
+                case 65:
+                    output[i++] = 0;
+                    break;
+                case 67:
+                    output[i++] = 1;
+                    break;
+                case 71:
+                    output[i++] = 2;
+                    break;
+                case 84:
+                    output[i++] = 3;
+                    break;
+                case 45:
+                    output[i++] = 4;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return output;
+    }
+
     public static byte[] splitReadIntoByteArray(String read) {
         byte[] Rs = new byte[read.length()];
         char[] readSplit = read.toCharArray();
@@ -166,18 +198,13 @@ public class Utils extends FastaParser {
     }
 
     public static Read[] parseInput(String path) {
-//        if (isFastaGlobalMatePairFormat(path)) {
-//            return FastaParser.parseFastaPairedEnd(path);
-        if (isFastaFormat(path)) {
-            return parseFastaInput(path);
-        } else {
-            return parseBAMSAM(path);
-        }
+        return parseBAMSAM(path);
     }
 
     public static Map<String, Read> parseBAMSAMPure(String location) {
         File bam = new File(location);
         final ConcurrentMap<String, Read> readMap;
+        System.out.println("");
         try (SAMFileReader sfr = new SAMFileReader(bam)) {
             StatusUpdate.getINSTANCE().print("Parsing alignment");
             readMap = Maps.newConcurrentMap();
@@ -190,9 +217,9 @@ public class Utils extends FastaParser {
                         boolean hasQuality = read.hasQuality;
                         if (readMap.containsKey(name)) {
                             if (hasQuality) {
-                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar);
+                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar, read.insertions);
                             } else {
-                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar);
+                                readMap.get(name).setPairedEnd(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar, read.insertions);
                             }
                             Read r2 = readMap.get(name);
                             if (r2.isPaired()) {
@@ -207,9 +234,9 @@ public class Utils extends FastaParser {
                             }
                         } else {
                             if (hasQuality) {
-                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar));
+                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.quality, read.cigar, read.insertions));
                             } else {
-                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar));
+                                readMap.put(name, new Read(read.readBases, read.refStart, read.refStart + read.readBases.length, read.cigar, read.insertions));
                             }
                         }
                     }
@@ -227,7 +254,7 @@ public class Utils extends FastaParser {
         for (Read r1 : readMap.values()) {
             if (r1 != null) {
                 int hash = r1.hashCode();
-                if (hashed.containsKey(hash)) {
+                if (hashed.containsKey(hash) && hashed.get(hash).sameInsertions(r1)) {
                     hashed.get(hash).incCount();
                 } else {
                     hashed.put(hash, r1);
@@ -235,27 +262,6 @@ public class Utils extends FastaParser {
             }
         }
         return hashed.values().toArray(new Read[hashed.size()]);
-    }
-
-    public static Read[] parseFastaInput(String path) {
-        List<Read> hashing = new ArrayList<>();
-        Map<Integer, Read> hashMap = new HashMap<>();
-        String[] parseFarFile = parseFarFile(path);
-        for (String s : parseFarFile) {
-            byte[] packed = splitReadIntoByteArray(s);
-            boolean[] cigar = new boolean[s.length()];
-            for (int i = 0; i < s.length(); i++) {
-                cigar[i] = true;
-            }
-            Read r = new Read(packed, 0, s.length(), cigar);
-            if (hashMap.containsKey(r.hashCode())) {
-                hashMap.get(r.hashCode()).incCount();
-            } else {
-                hashMap.put(r.hashCode(), new Read(packed, 0, s.length(), cigar));
-            }
-        }
-        hashing.addAll(hashMap.values());
-        return hashing.toArray(new Read[hashing.size()]);
     }
 
     public static String reverse(int[] intArray) {

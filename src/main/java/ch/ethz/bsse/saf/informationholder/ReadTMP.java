@@ -17,6 +17,8 @@
  */
 package ch.ethz.bsse.saf.informationholder;
 
+import java.util.Map;
+
 /**
  * @author Armin Töpfer (armin.toepfer [at] gmail.com)
  */
@@ -27,13 +29,15 @@ public class ReadTMP {
     public int refStart;
     public boolean hasQuality;
     public boolean[] cigar;
+    public Map<Integer,byte[]> insertions;
 
-    public ReadTMP(String name, double[] quality, byte[] readBases, int refStart, boolean hasQuality, boolean[] cigar) {
+    public ReadTMP(String name, double[] quality, byte[] readBases, int refStart, boolean hasQuality, boolean[] cigar, Map<Integer,byte[]> insertions) {
         this.name = name;
         this.quality = quality;
         this.readBases = readBases;
         this.refStart = refStart;
         this.hasQuality = hasQuality;
         this.cigar = cigar;
+        this.insertions = insertions;
     }
 }

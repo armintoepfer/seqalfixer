@@ -3,9 +3,9 @@
  *
  * This file is part of AlignmentFixer.
  *
- * AlignmentFixer is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * AlignmentFixer is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or any later version.
  *
  * AlignmentFixer is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -18,6 +18,8 @@
 package ch.ethz.bsse.saf.informationholder;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Armin Töpfer (armin.toepfer [at] gmail.com)
@@ -37,6 +39,8 @@ public class Read {
     private int crickEnd = -1;
     private int insertion;
     private boolean merged;
+    private Map<Integer, byte[]> watsonInsertions = new HashMap<>();
+    private Map<Integer, byte[]> crickInsertions = new HashMap<>();
 
     public Read(Read r) {
         this.watsonSequence = r.watsonSequence;
@@ -50,29 +54,35 @@ public class Read {
         this.crickBegin = r.crickBegin;
         this.insertion = r.insertion;
         this.merged = r.merged;
+        this.watsonInsertions = r.watsonInsertions;
     }
 
-    public Read(byte[] sequence, int begin, int end, double[] quality, boolean[] cigar) {
+    public Read(byte[] sequence, int begin, int end, double[] quality, boolean[] cigar, Map<Integer, byte[]> insertions) {
         this.watsonSequence = sequence;
         this.watsonBegin = begin;
         this.watsonEnd = end;
         this.watsonQuality = quality;
         this.watsonCigar = cigar;
+        this.watsonInsertions = insertions;
     }
 
-    public Read(byte[] sequence, int begin, int end, boolean[] cigar) {
+    public Read(byte[] sequence, int begin, int end, boolean[] cigar, Map<Integer, byte[]> insertions) {
         this.watsonSequence = sequence;
         this.watsonBegin = begin;
         this.watsonEnd = end;
         this.watsonCigar = cigar;
+        this.watsonInsertions = insertions;
+
     }
 
-    public Read(byte[] sequence, int begin, int end, boolean[] watsonCigar, byte[] Csequence, int Cbegin, int Cend, boolean[] Ccigar) {
+    public Read(byte[] sequence, int begin, int end, boolean[] watsonCigar, Map<Integer, byte[]> insertions, byte[] Csequence, int Cbegin, int Cend, boolean[] Ccigar, Map<Integer, byte[]> Cinsertions) {
         this.watsonSequence = sequence;
         this.watsonBegin = begin;
         this.watsonEnd = end;
         this.watsonCigar = watsonCigar;
-        setPairedEnd(Csequence, Cbegin, Cend, Ccigar);
+        this.watsonInsertions = insertions;
+
+        setPairedEnd(Csequence, Cbegin, Cend, Ccigar, Cinsertions);
         if (end - begin != sequence.length) {
             throw new IllegalAccessError("length problen: watson. Suggested length: " + (end - begin) + ". Actual length: " + sequence.length);
         }
@@ -81,13 +91,14 @@ public class Read {
         }
     }
 
-    public Read(byte[] sequence, int begin, int end, double[] quality, boolean[] watsonCigar, byte[] Csequence, int Cbegin, int Cend, double[] Cquality, boolean[] Ccigar) {
+    public Read(byte[] sequence, int begin, int end, double[] quality, boolean[] watsonCigar, Map<Integer, byte[]> insertions, byte[] Csequence, int Cbegin, int Cend, double[] Cquality, boolean[] Ccigar, Map<Integer, byte[]> Cinsertions) {
         this.watsonSequence = sequence;
         this.watsonBegin = begin;
         this.watsonEnd = end;
         this.watsonQuality = quality;
         this.watsonCigar = watsonCigar;
-        setPairedEnd(Csequence, Cbegin, Cend, Cquality, Ccigar);
+        this.watsonInsertions = insertions;
+        setPairedEnd(Csequence, Cbegin, Cend, Cquality, Ccigar, Cinsertions);
         if (end - begin != sequence.length) {
             throw new IllegalAccessError("length problen: watson. Suggested length: " + (end - begin) + ". Actual length: " + sequence.length);
         }
@@ -114,6 +125,8 @@ public class Read {
         this.watsonSequence = seqConsensus;
         this.watsonQuality = qualConsensus;
         this.watsonCigar = cigarConsensus;
+        this.watsonInsertions.putAll(this.crickInsertions);
+        this.crickInsertions = null;
         this.crickEnd = -1;
         this.crickBegin = 0;
         this.crickSequence = null;
@@ -255,12 +268,13 @@ public class Read {
         return this.crickSequence != null;
     }
 
-    public final void setPairedEnd(byte[] sequence, int begin, int end, double[] quality, boolean[] cigar) {
+    public final void setPairedEnd(byte[] sequence, int begin, int end, double[] quality, boolean[] cigar, Map<Integer, byte[]> insertions) {
         this.crickSequence = sequence;
         this.crickBegin = begin;
         this.crickEnd = end;
         this.crickQuality = quality;
         this.crickCigar = cigar;
+        this.crickInsertions = insertions;
         rearrange();
         this.insertion = this.crickBegin - this.watsonEnd;
         if (!Globals.getINSTANCE().isUNPAIRED()) {
@@ -268,11 +282,12 @@ public class Read {
         }
     }
 
-    public final void setPairedEnd(byte[] sequence, int begin, int end, boolean[] cigar) {
+    public final void setPairedEnd(byte[] sequence, int begin, int end, boolean[] cigar, Map<Integer, byte[]> insertions) {
         this.crickSequence = sequence;
         this.crickBegin = begin;
         this.crickEnd = end;
         this.crickCigar = cigar;
+        this.crickInsertions = insertions;
         rearrange();
         this.insertion = this.crickBegin - this.watsonEnd;
         if (!Globals.getINSTANCE().isUNPAIRED()) {
@@ -317,6 +332,36 @@ public class Read {
         return obj != null && obj.getClass() == this.getClass() && obj.hashCode() == this.hashCode();
     }
 
+    public boolean sameInsertions(Read r) {
+        if (this.watsonInsertions.size() != r.watsonInsertions.size()
+                || this.crickInsertions.size() != r.crickInsertions.size()) {
+            return false;
+        }
+        for (Map.Entry<Integer, byte[]> e : this.watsonInsertions.entrySet()) {
+            if (!r.watsonInsertions.containsKey(e.getKey())
+                    || this.watsonInsertions.get(e.getKey()).length != r.watsonInsertions.get(e.getKey()).length) {
+                return false;
+            }
+            byte[] here = this.watsonInsertions.get(e.getKey());
+            byte[] there = r.watsonInsertions.get(e.getKey());
+            if (!Arrays.equals(here, there)) {
+                return false;
+            }
+        }
+        for (Map.Entry<Integer, byte[]> e : this.crickInsertions.entrySet()) {
+            if (!r.crickInsertions.containsKey(e.getKey())
+                    || this.crickInsertions.get(e.getKey()).length != r.crickInsertions.get(e.getKey()).length) {
+                return false;
+            }
+            byte[] here = this.crickInsertions.get(e.getKey());
+            byte[] there = r.crickInsertions.get(e.getKey());
+            if (!Arrays.equals(here, there)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void rearrange() {
         if (this.watsonBegin > this.crickBegin) {
             int beginTmp = this.watsonBegin;
@@ -336,6 +381,10 @@ public class Read {
             boolean[] cigarTmp = this.watsonCigar;
             this.watsonCigar = this.crickCigar;
             this.crickCigar = cigarTmp;
+
+            Map insertionTmp = this.watsonInsertions;
+            this.watsonInsertions = this.crickInsertions;
+            this.crickInsertions = insertionTmp;
         }
     }
 
@@ -351,13 +400,14 @@ public class Read {
     public Read unpair() {
         Read r = null;
         if (this.crickQuality != null) {
-            r = new Read(crickSequence, crickBegin, crickEnd, crickQuality, crickCigar);
+            r = new Read(crickSequence, crickBegin, crickEnd, crickQuality, crickCigar, crickInsertions);
         } else {
-            r = new Read(crickSequence, crickBegin, crickEnd, crickCigar);
+            r = new Read(crickSequence, crickBegin, crickEnd, crickCigar, crickInsertions);
         }
         this.crickBegin = -1;
         this.crickEnd = -1;
         this.crickSequence = null;
+        this.crickInsertions = null;
         return r;
     }
 
@@ -399,5 +449,21 @@ public class Read {
 
     public boolean isMerged() {
         return merged;
+    }
+
+    public Map<Integer, byte[]> getWatsonInsertions() {
+        return watsonInsertions;
+    }
+
+    public void setWatsonInsertions(Map<Integer, byte[]> watsonInsertions) {
+        this.watsonInsertions = watsonInsertions;
+    }
+
+    public Map<Integer, byte[]> getCrickInsertions() {
+        return crickInsertions;
+    }
+
+    public void setCrickInsertions(Map<Integer, byte[]> crickInsertions) {
+        this.crickInsertions = crickInsertions;
     }
 }
