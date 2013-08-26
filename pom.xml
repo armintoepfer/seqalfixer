@@ -107,12 +107,6 @@
             <artifactId>guava</artifactId>
             <version>14.0.1</version>
         </dependency>
-<!--        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout</artifactId>
-            <version>0.9-SNAPSHOT</version>
-            <type>pom</type>
-        </dependency>-->
     </dependencies>
     <pluginRepositories>
         <pluginRepository>
