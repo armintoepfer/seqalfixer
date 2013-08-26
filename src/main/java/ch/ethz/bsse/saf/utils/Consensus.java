@@ -68,6 +68,12 @@ public class Consensus {
             }
         }
         sb.setLength(0);
+        StringBuilder output = new StringBuilder();
+        if (Globals.getINSTANCE().getINSERTIONS() != Integer.MAX_VALUE) {
+            output.append("\n === Insertions ===\n");
+            output.append("Pos\tCount\tSequence\n");
+        }
+        System.out.println("");
         for (int L = alignment.length, j = 0; j < L; j++) {
             int index = -1;
             int max = -1;
@@ -97,11 +103,11 @@ public class Consensus {
                 }
                 if (longestInsert != null) {
                     sb.append(Utils.reverse(longestInsert.sequence));
-                    System.out.println("#" + longestInsert.position + "\t" + longestInsert.count + "\t" + Utils.reverse(longestInsert.sequence));
+                    output.append(longestInsert.position).append("\t").append(longestInsert.count).append("\t").append(Utils.reverse(longestInsert.sequence)).append("\n");
                 }
             }
         }
-
+        Globals.getINSTANCE().setINSERTION_SUMMARY(output.toString());
         return sb.toString().replaceAll("N", "-");
     }
 }

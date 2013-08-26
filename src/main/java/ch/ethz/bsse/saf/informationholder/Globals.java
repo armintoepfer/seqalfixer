@@ -3,21 +3,20 @@
  *
  * This file is part of SequenceAlignmentFixer.
  *
- * SequenceAlignmentFixer is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * SequenceAlignmentFixer is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or any later
+ * version.
  *
- * SequenceAlignmentFixer is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * SequenceAlignmentFixer is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU General Public License along with
  * SequenceAlignmentFixer. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.ethz.bsse.saf.informationholder;
-
-import com.google.common.collect.Maps;
-import java.util.Map;
 
 /**
  * Information holder for all necessary given and inferred parameters.
@@ -43,7 +42,7 @@ public class Globals {
     private int ALIGNMENT_END = Integer.MIN_VALUE;
     private String GENOME;
     private String SAVEPATH;
-    private Map<Integer,byte[]> insertionMap = Maps.newConcurrentMap();
+    private String INSERTION_SUMMARY;
 
     public Globals getInstance() {
         return INSTANCE;
@@ -135,10 +134,6 @@ public class Globals {
         this.CONSENSUS = CONSENSUS;
     }
 
-    public Map<Integer, byte[]> getInsertionMap() {
-        return insertionMap;
-    }
-
     public int getINSERTIONS() {
         return INSERTIONS;
     }
@@ -153,5 +148,13 @@ public class Globals {
 
     public void setCOVERAGE(int COVERAGE) {
         this.COVERAGE = COVERAGE;
+    }
+
+    public String getINSERTION_SUMMARY() {
+        return INSERTION_SUMMARY;
+    }
+
+    public void setINSERTION_SUMMARY(String INSERTION_SUMMARY) {
+        this.INSERTION_SUMMARY = INSERTION_SUMMARY;
     }
 }

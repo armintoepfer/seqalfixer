@@ -179,6 +179,8 @@ public class Startup {
             Globals.getINSTANCE().setINSERTIONS(this.insertions);
             Globals.getINSTANCE().setCOVERAGE(this.coverage);
         new Preprocessing(genome, input);
+        System.out.println("");
+        System.out.println(Globals.getINSTANCE().getINSERTION_SUMMARY());
     }
 
     public void doMain(String[] args) throws IOException {
