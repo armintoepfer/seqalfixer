@@ -212,8 +212,10 @@ public class Startup {
             System.err.println(" -------------------------");
             System.err.println(" === GENERAL options ===");
             System.err.println("  -i INPUT\t\t: Alignment file in BAM or SAM format.");
-            System.err.println("  -g INPUT\t\t: References in FASTA format.");
             System.err.println("  -o PATH\t\t: Path to the output directory (default: current directory).");
+            System.err.println("  --consensus\t\t: Create consensus.fasta as output.");
+            System.err.println("  -insertions INT\t: Minimal coverage of insertions to be included in consensus (default: do not include insertions).");
+            System.err.println("  -coverage INT\t\t: Minimal coverage (default: 0).");
             System.err.println("");
             System.err.println(" -------------------------");
             System.err.println(" === Technical options ===");
