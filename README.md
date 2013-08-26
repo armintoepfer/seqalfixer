@@ -4,7 +4,7 @@
 This java command line application is a toolbox, combining a multitude of alignment statistics and fixes for Next Generation Sequencing (NGS) data.
 
 ### CITATION:
-If you use <b>S</b>equence<b>A</b>lignment<b>F</b>ixer, please cite the paper <i>Töpfer A.</i> https://github.com/armintoepfer/seqalfixer
+If you use <b>S</b>equence<b>A</b>lignment<b>F</b>ixer, please cite <i>Töpfer A.</i> https://github.com/armintoepfer/seqalfixer
 
 ### DOWNLOAD:
 Please get the latest binary at https://sourceforge.net/projects/seqalfixer/releases
@@ -14,6 +14,9 @@ Please get the latest binary at https://sourceforge.net/projects/seqalfixer/rele
  - Coverage plot
  - SNV entropy landscape plot
  - Gapped consensus sequence including major deletions
+
+### SOON:
+ - Include non-frameshift insertion into consensus
 
 - - -
 
