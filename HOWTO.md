@@ -11,7 +11,6 @@ Export enviroment variables for __GATK__ and __picard__:
 ```bash
 export PICARD_HOME=~/tools/picard-tools/
 export GATK_HOME=~/tools/gatk/
-export IDF_HOME=~/tools/InDelFixer/
 ```
 
 ###Realign
