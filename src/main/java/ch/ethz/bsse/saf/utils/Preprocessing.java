@@ -44,8 +44,7 @@ public class Preprocessing {
 
         if (Globals.getINSTANCE().isCONSENSUS()) {
             Insertions.getINSTANCE().add(alignmentReads);
-            String consensus = Consensus.create(alignment);
-            Utils.saveFile(Globals.getINSTANCE().getSAVEPATH() + "consensus.fasta", ">consensus\n" + consensus);
+            Consensus.create(alignment);
         }
         StatusUpdate.getINSTANCE().println("Reads\t\t\t" + N);
         StatusUpdate.getINSTANCE().println("Uniques\t\t" + alignmentReads.length);
