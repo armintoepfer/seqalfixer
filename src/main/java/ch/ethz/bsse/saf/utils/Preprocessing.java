@@ -3,13 +3,14 @@
  *
  * This file is part of SequenceAlignmentFixer.
  *
- * SequenceAlignmentFixer is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or any later version.
+ * SequenceAlignmentFixer is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or any later
+ * version.
  *
- * SequenceAlignmentFixer is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * SequenceAlignmentFixer is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -22,7 +23,9 @@ import ch.ethz.bsse.saf.informationholder.Read;
 import ch.ethz.bsse.saf.insertion.InsertionTriple;
 import ch.ethz.bsse.saf.insertion.Insertions;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +46,6 @@ public class Preprocessing {
         this.saveR();
 
         if (Globals.getINSTANCE().isCONSENSUS()) {
-            Insertions.getINSTANCE().add(alignmentReads);
             Consensus.create(alignment);
         }
         StatusUpdate.getINSTANCE().println("Reads\t\t\t" + N);
@@ -68,6 +70,7 @@ public class Preprocessing {
             }
         });
         StatusUpdate.getINSTANCE().print("Modifying reads\tdone");
+        Insertions.getINSTANCE().add(reads);
         int[][] alignment = computeAlignment(reads, L);
         return alignment;
     }
@@ -91,8 +94,8 @@ public class Preprocessing {
         char[] alphabet = new char[]{'A', 'C', 'G', 'T', '-'};
         double[] entropy = new double[L];
 
-        sb.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
-        sbw.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
+//        sb.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
+//        sbw.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
         sb.append("Pos");
         sbw.append("Pos");
         for (int i = 0; i < alignment[0].length; i++) {
@@ -102,11 +105,11 @@ public class Preprocessing {
         sb.append("\n");
         sbw.append("\n");
 
-        sbE.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
+//        sbE.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
         for (int i = 0; i < L; i++) {
             int hits = 0;
-            sb.append(i);
-            sbw.append(i);
+            sb.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
+            sbw.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
 
             int coveragePos = 0;
             for (int v = 0; v < 5; v++) {
@@ -124,12 +127,26 @@ public class Preprocessing {
                     hits++;
                 }
             }
-            sb.append("\n");
             sbw.append("\n");
+            if (ap.insertions.get(i) != null && !ap.insertions.get(i).isEmpty()) {
+                int y = 0;
+                for (int[] whatever : ap.insertions.get(i)) {
+                    sbw.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i).append(".").append(y++);
+                    double sum = 0;
+                    for (int v = 0; v < 4; v++) {
+                        sum += whatever[v];
+                    }
+                    for (int v = 0; v < 4; v++) {
+                        sbw.append("\t").append(shorten(whatever[v] / sum));
+                    }
+                    sbw.append("\n");
+                }
+            }
+            sb.append("\n");
             if (hits == 0) {
                 System.out.println("Position " + i + " is not covered.");
             }
-            sbE.append(i).append("\t").append(entropy[i]).append("\n");
+            sbE.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i).append("\t").append(entropy[i]).append("\n");
             StatusUpdate.getINSTANCE().print("Alignment summaries\t" + (Math.round((entropyCounter++ / L) * 100)) + "%");
         }
 
@@ -145,6 +162,35 @@ public class Preprocessing {
     private static AlignmentPair countPos(Read[] reads, int L) {
         AlignmentPair ap = new AlignmentPair(L, 5);
 
+        for (int j = 0; j < L; j++) {
+            if (Insertions.getINSTANCE().getInsertions().containsKey(j)) {
+                List<InsertionTriple> topX = new LinkedList<>();
+                int maxLength = 0;
+                InsertionTriple longestInsert = null;
+                for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
+                    if (it.count > Globals.getINSTANCE().getINSERTIONS()) {
+                        topX.add(it);
+                        if (it.sequence.length > maxLength) {
+                            maxLength = it.sequence.length;
+                            longestInsert = it;
+                        }
+                    }
+                }
+                if (longestInsert != null && longestInsert.sequence != null) {
+                    for (int x = 0; x < longestInsert.sequence.length; x++) {
+                        if (ap.insertions.get(j) == null) {
+                            ap.insertions.add(j, new LinkedList());
+                        }
+                        ap.insertions.get(j).add(new int[4]);
+                    }
+                    for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
+                        for (int i = 0; i < it.sequence.length; i++) {
+                            ap.insertions.get(j).get(i)[it.sequence[i]] += it.count;
+                        }
+                    }
+                }
+            }
+        }
         for (Read r : reads) {
             int begin = r.getWatsonBegin();
             for (int i = 0; i < r.getWatsonLength(); i++) {
@@ -210,9 +256,14 @@ class AlignmentPair {
 
     double[][] weighted;
     int[][] counts;
+    List<List<int[]>> insertions;
 
     public AlignmentPair(int L, int n) {
         this.weighted = new double[L][n];
         this.counts = new int[L][n];
+        this.insertions = new ArrayList();
+        for (int i = 0; i < L; i++) {
+            this.insertions.add(new ArrayList());
+        }
     }
 }
