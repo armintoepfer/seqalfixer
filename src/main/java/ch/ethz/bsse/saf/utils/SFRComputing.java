@@ -101,13 +101,13 @@ public class SFRComputing implements Callable<List<ReadTMP>> {
                         }
                         break;
                     case I:
-                        if (c.getLength() % 3 == 0) {
+//                        if (c.getLength() % 3 == 0) {
                             byte[] insertion = new byte[c.getLength()];
                             for (int i = 0; i < c.getLength(); i++) {
                                 insertion[i] = readBases_pure[readStart + i];
                             }
                             insertions.put(refStart + readStart, Utils.reverseCharsToBytes(insertion));
-                        }
+//                        }
                         readStart += c.getLength();
                         break;
                     case D:

@@ -106,7 +106,7 @@ public class Preprocessing {
         sbw.append("\n");
 
 //        sbE.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
-        for (int i = 0; i < L; i++) {
+        for (int i = 0; i < L - Globals.getINSTANCE().getALIGNMENT_BEGIN(); i++) {
             int hits = 0;
             sb.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
             sbw.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
@@ -128,20 +128,20 @@ public class Preprocessing {
                 }
             }
             sbw.append("\n");
-            if (ap.insertions.get(i) != null && !ap.insertions.get(i).isEmpty()) {
-                int y = 0;
-                for (int[] whatever : ap.insertions.get(i)) {
-                    sbw.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i).append(".").append(y++);
-                    double sum = 0;
-                    for (int v = 0; v < 4; v++) {
-                        sum += whatever[v];
-                    }
-                    for (int v = 0; v < 4; v++) {
-                        sbw.append("\t").append(shorten(whatever[v] / sum));
-                    }
-                    sbw.append("\n");
-                }
-            }
+//            if (ap.insertions.get(i) != null && !ap.insertions.get(i).isEmpty()) {
+//                int y = 0;
+//                for (int[] whatever : ap.insertions.get(i)) {
+//                    sbw.append(i).append(".").append(y++);
+//                    double sum = 0;
+//                    for (int v = 0; v < 4; v++) {
+//                        sum += whatever[v];
+//                    }
+//                    for (int v = 0; v < 4; v++) {
+//                        sbw.append("\t").append(shorten(whatever[v] / sum));
+//                    }
+//                    sbw.append("\n");
+//                }
+//            }
             sb.append("\n");
             if (hits == 0) {
                 System.out.println("Position " + i + " is not covered.");
@@ -168,7 +168,7 @@ public class Preprocessing {
                 int maxLength = 0;
                 InsertionTriple longestInsert = null;
                 for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
-                    if (it.count > Globals.getINSTANCE().getINSERTIONS()) {
+                    if (it.count >= Globals.getINSTANCE().getINSERTIONS()) {
                         topX.add(it);
                         if (it.sequence.length > maxLength) {
                             maxLength = it.sequence.length;
@@ -178,14 +178,14 @@ public class Preprocessing {
                 }
                 if (longestInsert != null && longestInsert.sequence != null) {
                     for (int x = 0; x < longestInsert.sequence.length; x++) {
-                        if (ap.insertions.get(j) == null) {
-                            ap.insertions.add(j, new LinkedList());
+                        if (ap.insertions.get(longestInsert.position) == null) {
+                            ap.insertions.add(longestInsert.position, new LinkedList());
                         }
-                        ap.insertions.get(j).add(new int[4]);
+                        ap.insertions.get(longestInsert.position).add(new int[4]);
                     }
                     for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
                         for (int i = 0; i < it.sequence.length; i++) {
-                            ap.insertions.get(j).get(i)[it.sequence[i]] += it.count;
+                            ap.insertions.get(longestInsert.position).get(i)[it.sequence[i]] += it.count;
                         }
                     }
                 }

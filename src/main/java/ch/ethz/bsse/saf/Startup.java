@@ -56,6 +56,8 @@ public class Startup {
     private int insertions = Integer.MAX_VALUE;
     @Option(name = "-coverage")
     private int coverage = 1;
+    @Option(name = "-merge")
+    private boolean merge = false;
 
     private void setInputOutput() {
         if (output == null) {
@@ -220,6 +222,7 @@ public class Startup {
             System.err.println("  --consensus\t\t: Create consensus.fasta as output.");
             System.err.println("  -insertions INT\t: Minimal coverage of insertions to be included in consensus (default: do not include insertions).");
             System.err.println("  -coverage INT\t\t: Minimal coverage (default: 0).");
+//            System.err.println("  -merge\t\t\t: Merge neighbouring insertions.");
             System.err.println("");
             System.err.println(" -------------------------");
             System.err.println(" === Technical options ===");

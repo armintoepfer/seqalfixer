@@ -92,7 +92,7 @@ public class Consensus {
                 int maxLength = 0;
                 InsertionTriple longestInsert = null;
                 for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
-                    if (it.count > Globals.getINSTANCE().getINSERTIONS()) {
+                    if (it.count >= Globals.getINSTANCE().getINSERTIONS()) {
                         topX.add(it);
                         if (it.sequence.length > maxLength) {
                             maxLength = it.sequence.length;
@@ -130,7 +130,7 @@ public class Consensus {
                 int maxLength = 0;
                 InsertionTriple longestInsert = null;
                 for (InsertionTriple it : Insertions.getINSTANCE().getInsertions().get(j)) {
-                    if (it.count > Globals.getINSTANCE().getINSERTIONS()) {
+                    if (it.count >= Globals.getINSTANCE().getINSERTIONS()) {
                         topX.add(it);
                         if (it.sequence.length > maxLength) {
                             maxLength = it.sequence.length;
