@@ -18,6 +18,8 @@ Please get the latest binary at https://github.com/armintoepfer/seqalfixer/relea
   - In-frame insertions are including, with minmal coverage of `-insertions INT`
   - Minimal coverage with `-coverage INT`
 
+### WORKFLOW:
+A BWA workflow to realign reads against the consensus sequence, please have a look at [HOWTO](https://github.com/armintoepfer/seqalfixer/blob/master/HOWTO.md)
 - - -
 
 #### PREREQUISITES TO RUN:
