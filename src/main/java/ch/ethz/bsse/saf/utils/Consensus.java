@@ -36,6 +36,7 @@ public class Consensus {
         wobbles.put("ACT", "H");
         wobbles.put("AGT", "D");
         wobbles.put("ACGT", "N");
+        wobbles.put("-", "N");
 
         StringBuilder sb = new StringBuilder();
         for (int L = alignment.length, n = alignment[0].length, j = 0; j < L; j++) {
@@ -132,20 +133,27 @@ public class Consensus {
         for (int L = alignment.length, j = 0; j < L; j++) {
             int max = -1;
             double sum = 0;
+            int index = -1;
             for (int v = 0; v < 5; v++) {
                 sum += alignment[j][v];
                 if (alignment[j][v] > max) {
                     max = alignment[j][v];
+                    index = v;
                 }
             }
-            StringBuilder w_sb = new StringBuilder();
-            for (int v = 0; v < 4; v++) {
-                if (alignment[j][v] / sum > Globals.getINSTANCE().getPLURALITY()) {
-                    w_sb.append(Utils.reverse(v));
-                }
-            }
+
             if (max > Globals.getINSTANCE().getCOVERAGE()) {
-                sb.append(wobbles.get(w_sb.toString()));
+                if (index == 4) {
+                    sb.append("N");
+                } else {
+                    StringBuilder w_sb = new StringBuilder();
+                    for (int v = 0; v < 4; v++) {
+                        if (alignment[j][v] / sum > Globals.getINSTANCE().getPLURALITY()) {
+                            w_sb.append(Utils.reverse(v));
+                        }
+                    }
+                    sb.append(wobbles.get(w_sb.toString()));
+                }
             } else {
                 if (alignment[j][4] > 10) {
                     sb.append("X");
