@@ -58,6 +58,8 @@ public class Startup {
     private int coverage = 1;
     @Option(name = "-merge")
     private boolean merge = false;
+    @Option(name = "-plurality")
+    private double plurality = 0.05;
 
     private void setInputOutput() {
         if (output == null) {
@@ -77,6 +79,7 @@ public class Startup {
 
     private void setMainParameters() {
         Globals.getINSTANCE().setDEBUG(this.verbose);
+        Globals.getINSTANCE().setPLURALITY(this.plurality);
     }
 
     private void profile() throws CmdLineException {

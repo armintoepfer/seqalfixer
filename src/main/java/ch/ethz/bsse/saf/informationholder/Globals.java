@@ -43,6 +43,7 @@ public class Globals {
     private String GENOME;
     private String SAVEPATH;
     private String INSERTION_SUMMARY;
+    private double PLURALITY;
 
     public Globals getInstance() {
         return INSTANCE;
@@ -156,5 +157,13 @@ public class Globals {
 
     public void setINSERTION_SUMMARY(String INSERTION_SUMMARY) {
         this.INSERTION_SUMMARY = INSERTION_SUMMARY;
+    }
+
+    public double getPLURALITY() {
+        return PLURALITY;
+    }
+
+    public void setPLURALITY(double PLURALITY) {
+        this.PLURALITY = PLURALITY;
     }
 }

@@ -140,7 +140,7 @@ public class Consensus {
             }
             StringBuilder w_sb = new StringBuilder();
             for (int v = 0; v < 4; v++) {
-                if (alignment[j][v] / sum > 0.05) {
+                if (alignment[j][v] / sum > Globals.getINSTANCE().getPLURALITY()) {
                     w_sb.append(Utils.reverse(v));
                 }
             }
