@@ -30,6 +30,7 @@ public class Globals {
     public static Globals getINSTANCE() {
         return INSTANCE;
     }
+    private boolean HIDE;
     private boolean UNPAIRED;
     private boolean WINDOW;
     private boolean DEBUG;
@@ -165,5 +166,13 @@ public class Globals {
 
     public void setPLURALITY(double PLURALITY) {
         this.PLURALITY = PLURALITY;
+    }
+
+    public boolean isHIDE() {
+        return HIDE;
+    }
+
+    public void setHIDE(boolean HIDE) {
+        this.HIDE = HIDE;
     }
 }

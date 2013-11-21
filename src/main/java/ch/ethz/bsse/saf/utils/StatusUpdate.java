@@ -3,13 +3,14 @@
  *
  * This file is part of SequenceAlignmentFixer.
  *
- * SequenceAlignmentFixer is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or any later version.
+ * SequenceAlignmentFixer is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or any later
+ * version.
  *
- * SequenceAlignmentFixer is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * SequenceAlignmentFixer is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -44,14 +45,18 @@ public class StatusUpdate {
     }
 
     public void print(String s) {
-        if (!oldOut.equals(s)) {
-            this.oldOut = s;
-            System.out.print("\r" + time() + " " + s);
+        if (!Globals.getINSTANCE().isHIDE()) {
+            if (!oldOut.equals(s)) {
+                this.oldOut = s;
+                System.out.print("\r" + time() + " " + s);
+            }
         }
     }
 
     public void println(String s) {
-        System.out.print("\n" + time() + " " + s);
+        if (!Globals.getINSTANCE().isHIDE()) {
+            System.out.print("\n" + time() + " " + s);
+        }
     }
 
     public String time() {

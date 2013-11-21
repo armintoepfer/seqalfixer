@@ -60,6 +60,8 @@ public class Startup {
     private boolean merge = false;
     @Option(name = "-plurality")
     private double plurality = 0.05;
+    @Option(name = "-hide")
+    private boolean hide;
 
     private void setInputOutput() {
         if (output == null) {
@@ -79,6 +81,7 @@ public class Startup {
 
     private void setMainParameters() {
         Globals.getINSTANCE().setDEBUG(this.verbose);
+        Globals.getINSTANCE().setHIDE(this.hide);
         Globals.getINSTANCE().setPLURALITY(this.plurality);
     }
 

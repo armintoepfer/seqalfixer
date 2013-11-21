@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Armin Töpfer (armin.toepfer [at] gmail.com)
@@ -90,7 +88,6 @@ public class Preprocessing {
         StringBuilder sbE = new StringBuilder();
         StringBuilder sbCoverage = new StringBuilder();
 
-
         char[] alphabet = new char[]{'A', 'C', 'G', 'T', '-'};
         double[] entropy = new double[L];
 
@@ -106,7 +103,7 @@ public class Preprocessing {
         sbw.append("\n");
 
 //        sbE.append("#Offset: ").append(Globals.getINSTANCE().getALIGNMENT_BEGIN()).append("\n");
-        for (int i = 0; i < L - Globals.getINSTANCE().getALIGNMENT_BEGIN(); i++) {
+        for (int i = 0; i < L; i++) {
             int hits = 0;
             sb.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
             sbw.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i);
@@ -144,7 +141,9 @@ public class Preprocessing {
 //            }
             sb.append("\n");
             if (hits == 0) {
-                System.out.println("Position " + i + " is not covered.");
+                if (!Globals.getINSTANCE().isHIDE()) {
+                    System.out.println("Position " + i + " is not covered.");
+                }
             }
             sbE.append(Globals.getINSTANCE().getALIGNMENT_BEGIN() + i).append("\t").append(entropy[i]).append("\n");
             StatusUpdate.getINSTANCE().print("Alignment summaries\t" + (Math.round((entropyCounter++ / L) * 100)) + "%");
